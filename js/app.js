@@ -70,8 +70,6 @@ App.ApplicationAdapter = DS.FixtureAdapter;
 
 // session.js
 App.Session = Ember.Object.extend({
-  //in real world this would be set after a request to the server
-  sessionHash: 'ab07acbb1e496801937adfa772424bf7',
   currentQuizId: null,
   getCurrentQuiz: function(){
     var currentQuizId = this.currentQuizId;
@@ -96,10 +94,8 @@ App.Session = Ember.Object.extend({
 
 // quiz.js
 App.Quiz = DS.Model.extend({
-  name         : DS.attr(),
-  createdBy        : DS.attr(),
-  createdOn          : DS.attr(),
-  isComplete    : DS.attr(),
+  name : DS.attr(),
+  isComplete : DS.attr(),
   questions : DS.hasMany('question', { async: true } )
 });
 
@@ -165,9 +161,6 @@ App.QuizzesController = Ember.ArrayController.extend({
 });
 
 App.QuestionController = Ember.ObjectController.extend({
-  isComplete: function(){
-    return this.session.currentQuizIsComplete();
-  }.property(),
   actions: {
     getNextQuestion: function(currentQuestion){
       var currentQuestionIndex = this.store.all('question').indexOf( currentQuestion );
@@ -177,9 +170,7 @@ App.QuestionController = Ember.ObjectController.extend({
       } else {
         var submitQuiz = confirm('No more questions. Do you want to submit your quiz?');
         if(submitQuiz){
-          console.log('this.session.getCurrentQuiz().isComplete', this.session.getCurrentQuiz().isComplete);
           this.session.getCurrentQuiz().isComplete = true;
-          console.log('this.session.getCurrentQuiz().isComplete', this.session.getCurrentQuiz().isComplete);
           this.transitionToRoute('summary');
         }
       }
@@ -194,7 +185,6 @@ App.QuestionController = Ember.ObjectController.extend({
 App.SummaryController = Ember.ObjectController.extend({
   quizScore: function(){
     var currentQuizSession = this.session.getCurrentQuiz();
-    console.log('currentQuizSession', currentQuizSession);
 
     /**
     * TODO: fix bug here. If coming into app from /summary route, the `quizScore` property computation is triggered and won't display the correct answer percentage upon quiz completion
@@ -212,6 +202,7 @@ App.SummaryController = Ember.ObjectController.extend({
         correctAnswers.push(userAnswer);
       }
     });
+
     return correctAnswers.length / this.store.all('question').get('length') * 100;
   }.property()
 });
