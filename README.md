@@ -1,7 +1,7 @@
 ember-quiz
 ==========
 
-A simple quiz application using Ember
+A simple quiz application to learn more about Ember
 
 TODO
 * Better understand computed properties. I'm getting a code smell from my current usage of them, as mine seem to contain too much logic
