@@ -51,9 +51,9 @@
     Question #{{this.model.id}} - {{this.model.content}}
     <ul>
       {{#each answer in this.model.answers}}
-        <li {{action 'answer' answer}}>
-          {{answer.content}}
-        </li>
+          <li {{bind-attr class=":answer answerSelected"}} {{action 'answer' answer}}>
+            {{answer.content}}
+          </li>
       {{/each}}
     </ul>
     <div>

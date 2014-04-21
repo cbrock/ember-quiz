@@ -1,58 +1,55 @@
+/**
+* Mock data
+*/
 var quizzes = [
   {
     id: 123,
-    createdBy: 'Colin',
-    createdOn: new Date(),
-    isComplete: false,
     questions: [1, 2]
   },
   {
     id: 2456,
-    createdBy: 'Someone else',
-    createdOn: new Date(),
-    isComplete: false,
     questions: [3, 4, 5]
   }
 ];
 
 var questions = [
   { id: 1,
-    content: 'asdfasdf',
+    content: 'Who is the best super hero?',
     answers: [
-      { id: 1, content: 'I am an answer' },
-      { id: 2, content: 'I am an answer too' }
+      { id: 1, content: 'Punisher' },
+      { id: 2, content: 'Wolverine' }
     ],
     correctAnswer: 1
   },
   { id: 2,
-    content: 'fdghdfgh',
+    content: 'What color is the sky?',
     answers: [
-      { id: 1, content: 'I am an answer for question 2' },
-      { id: 2, content: 'I am an answer too' }
+      { id: 1, content: 'Green' },
+      { id: 2, content: 'Blue' }
     ],
     correctAnswer: 2
   },
   { id: 3,
-    content: 'wertwert',
+    content: 'What is 2 + 2?',
     answers: [
-      { id: 1, content: 'I am an answer for question 3' },
-      { id: 2, content: 'I am an answer too' }
+      { id: 1, content: '3' },
+      { id: 2, content: '4' }
     ],
     correctAnswer: 2
   },
   { id: 4,
-    content: 'sdbnnnvcn',
+    content: 'What is 5 + 5',
     answers: [
-      { id: 1, content: 'dfghiuef asdfhljsd a ssdf' },
-      { id: 2, content: 'I am an answer too' }
+      { id: 1, content: '10' },
+      { id: 2, content: '25' }
     ],
     correctAnswer: 1
   },
   { id: 5,
-    content: 'njkhjimbnmhjg',
+    content: 'Is Ember fun to work with?',
     answers: [
-      { id: 1, content: 'I am an answer' },
-      { id: 2, content: 'ssghksdfg erohgadkfhg' }
+      { id: 1, content: 'Yes' },
+      { id: 2, content: 'No' }
     ],
     correctAnswer: 1
   }
@@ -65,8 +62,11 @@ var App = Ember.Application.create({
   }
 });
 
-// store.js
 App.ApplicationAdapter = DS.FixtureAdapter;
+
+/**
+* Models
+*/
 
 // session.js
 App.Session = Ember.Object.extend({
@@ -88,6 +88,7 @@ App.Session = Ember.Object.extend({
   saveAnswer: function(questionId, answerId){
     var quiz = this.getCurrentQuiz();
     quiz.answers.set(questionId, answerId);
+    alert('Answer saved.');
     console.log('answer saved', questionId, answerId);
   }
 });
@@ -99,6 +100,7 @@ App.Quiz = DS.Model.extend({
   questions : DS.hasMany('question', { async: true } )
 });
 
+// question.js
 App.Question = DS.Model.extend({
   content: DS.attr(),
   answers: DS.attr(),
@@ -108,6 +110,10 @@ App.Question = DS.Model.extend({
 
 App.Quiz.FIXTURES = quizzes;
 App.Question.FIXTURES = questions;
+
+/**
+* Routes
+*/
 
 // router.js
 App.Router.map(function(){
@@ -126,12 +132,16 @@ App.IndexRoute = Ember.Route.extend({
   }
 });
 
-// usersRoute.js
+// quizzesRoute.js
 App.QuizzesRoute = Ember.Route.extend({
   model: function(){
     return this.store.find('quiz');
   }
 });
+
+/**
+* Controllers
+*/
 
 // quizzesController.js
 App.QuizzesController = Ember.ArrayController.extend({
@@ -161,6 +171,9 @@ App.QuizzesController = Ember.ArrayController.extend({
 });
 
 App.QuestionController = Ember.ObjectController.extend({
+  selectedAnswer: function(){
+
+  },
   actions: {
     getNextQuestion: function(currentQuestion){
       var currentQuestionIndex = this.store.all('question').indexOf( currentQuestion );
@@ -178,6 +191,7 @@ App.QuestionController = Ember.ObjectController.extend({
     answer: function(selectedAnswer){
       var questionId = this.get('model').get('id');
       this.session.saveAnswer(questionId, selectedAnswer.id);
+      this.set('selectedAnswer', true);
     }
   }
 });
