@@ -1,0 +1,24 @@
+{
+  "name": "ember-quiz",
+  "version": "0.0.0",
+  "description": "A simple quiz application using Ember",
+  "main": "index.html",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cbrock/ember-quiz.git"
+  },
+  "author": "",
+  "bugs": {
+    "url": "https://github.com/cbrock/ember-quiz/issues"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.4",
+    "grunt-contrib-jshint": "~0.10.0"
+  }
+}
