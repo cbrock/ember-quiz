@@ -55,6 +55,10 @@ var questions = [
   }
 ];
 
+/**
+* App init
+*/
+
 var App = Ember.Application.create({
   ready: function(){
     this.register('session:current', App.Session, {singleton: true});
@@ -74,7 +78,7 @@ App.Session = Ember.Object.extend({
   getCurrentQuiz: function(){
     var currentQuizId = this.currentQuizId;
     var quiz = this.quizHistory.find(function(quiz){
-      return +quiz.id === currentQuizId;
+          return +quiz.id === currentQuizId;
     });
     return quiz;
   },
@@ -96,7 +100,6 @@ App.Session = Ember.Object.extend({
 // quiz.js
 App.Quiz = DS.Model.extend({
   name : DS.attr(),
-  isComplete : DS.attr(),
   questions : DS.hasMany('question', { async: true } )
 });
 
@@ -148,9 +151,11 @@ App.QuizzesController = Ember.ArrayController.extend({
   actions: {
     quizStart: function(quiz){
       var quizId = +quiz.get('id');
+      
       var quizExistsInSession = this.session.quizHistory.find(function(quizSession){
         return quizSession.id === quizId;
       });
+      
       if(! quizExistsInSession){
         console.log('new quiz start', quiz.get('id'));
         var newQuiz = {
@@ -159,9 +164,8 @@ App.QuizzesController = Ember.ArrayController.extend({
           isComplete: false
         };
         this.session.quizHistory.push(newQuiz);
-      } else {
-        console.log('quiz exists in session already', quizExistsInSession);
       }
+
       this.session.currentQuizId = quizId;
     }
   },
@@ -170,18 +174,18 @@ App.QuizzesController = Ember.ArrayController.extend({
   }.property()
 });
 
+// questionController.js
 App.QuestionController = Ember.ObjectController.extend({
-  selectedAnswer: function(){
-
-  },
   actions: {
     getNextQuestion: function(currentQuestion){
       var currentQuestionIndex = this.store.all('question').indexOf( currentQuestion );
       var nextQuestion = this.store.all('question').objectAt( currentQuestionIndex + 1 );
+
       if(nextQuestion){
         this.transitionToRoute('question', nextQuestion.get('id'));
       } else {
         var submitQuiz = confirm('No more questions. Do you want to submit your quiz?');
+        
         if(submitQuiz){
           this.session.getCurrentQuiz().isComplete = true;
           this.transitionToRoute('summary');
@@ -196,6 +200,7 @@ App.QuestionController = Ember.ObjectController.extend({
   }
 });
 
+// summaryController.js
 App.SummaryController = Ember.ObjectController.extend({
   quizScore: function(){
     var currentQuizSession = this.session.getCurrentQuiz();
